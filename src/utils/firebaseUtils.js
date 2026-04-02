@@ -1,0 +1,150 @@
+import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, getDoc, query, where, orderBy, Timestamp, } from 'firebase/firestore';
+import { db } from '../firebase/config';
+// Helper function to convert Firestore Timestamps to JavaScript Dates
+const convertTimestamps = (data) => {
+    if (!data)
+        return data;
+    const converted = { ...data };
+    // Convert TMISIssueDate
+    if (converted.TMISIssueDate) {
+        if (converted.TMISIssueDate instanceof Timestamp) {
+            converted.TMISIssueDate = converted.TMISIssueDate.toDate();
+        }
+        else if (typeof converted.TMISIssueDate === 'string') {
+            converted.TMISIssueDate = new Date(converted.TMISIssueDate);
+        }
+    }
+    // Convert createdAt
+    if (converted.createdAt) {
+        if (converted.createdAt instanceof Timestamp) {
+            converted.createdAt = converted.createdAt.toDate();
+        }
+        else if (typeof converted.createdAt === 'string') {
+            converted.createdAt = new Date(converted.createdAt);
+        }
+    }
+    // Convert updatedAt
+    if (converted.updatedAt) {
+        if (converted.updatedAt instanceof Timestamp) {
+            converted.updatedAt = converted.updatedAt.toDate();
+        }
+        else if (typeof converted.updatedAt === 'string') {
+            converted.updatedAt = new Date(converted.updatedAt);
+        }
+    }
+    return converted;
+};
+// TMIS Header operations
+export const addTMISHeader = async (data) => {
+    const docRef = await addDoc(collection(db, 'TMIS_Header'), {
+        ...data,
+        TMISIssueDate: Timestamp.fromDate(new Date(data.TMISIssueDate)),
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+    });
+    return docRef.id;
+};
+export const updateTMISHeader = async (id, data) => {
+    const updateData = {
+        ...data,
+        updatedAt: Timestamp.now(),
+    };
+    if (data.TMISIssueDate) {
+        updateData.TMISIssueDate = Timestamp.fromDate(new Date(data.TMISIssueDate));
+    }
+    await updateDoc(doc(db, 'TMIS_Header', id), updateData);
+};
+export const getTMISHeader = async (id) => {
+    const docSnap = await getDoc(doc(db, 'TMIS_Header', id));
+    if (docSnap.exists()) {
+        return convertTimestamps({ id: docSnap.id, ...docSnap.data() });
+    }
+    return null;
+};
+export const getAllTMISHeaders = async () => {
+    const querySnapshot = await getDocs(query(collection(db, 'TMIS_Header'), orderBy('createdAt', 'desc')));
+    return querySnapshot.docs.map((doc) => convertTimestamps({ id: doc.id, ...doc.data() }));
+};
+export const searchTMISByTapeCode = async (tapeCode) => {
+    // Get all headers and filter in memory to avoid needing composite indexes
+    const allHeaders = await getAllTMISHeaders();
+    return allHeaders.filter((header) => header.TapeCode.toUpperCase().includes(tapeCode.toUpperCase()));
+};
+export const filterTMISByStatus = async (status) => {
+    const querySnapshot = await getDocs(query(collection(db, 'TMIS_Header'), where('Status', '==', status)));
+    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+};
+export const deleteTMISHeader = async (id) => {
+    // Delete header
+    await deleteDoc(doc(db, 'TMIS_Header', id));
+    // Delete associated records
+    await deleteLayersByHeaderId(id);
+    await deleteProcessesByHeaderId(id);
+    await deleteSlittingsByHeaderId(id);
+};
+// TMIS Layers operations
+export const addTMISLayer = async (data) => {
+    const docRef = await addDoc(collection(db, 'TMIS_Layers'), data);
+    return docRef.id;
+};
+export const updateTMISLayer = async (id, data) => {
+    await updateDoc(doc(db, 'TMIS_Layers', id), data);
+};
+export const deleteTMISLayer = async (id) => {
+    await deleteDoc(doc(db, 'TMIS_Layers', id));
+};
+export const getLayersByHeaderId = async (headerId) => {
+    const querySnapshot = await getDocs(query(collection(db, 'TMIS_Layers'), where('headerId', '==', headerId)));
+    const layers = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    return layers.sort((a, b) => a.LayerNo - b.LayerNo);
+};
+export const deleteLayersByHeaderId = async (headerId) => {
+    const layers = await getLayersByHeaderId(headerId);
+    for (const layer of layers) {
+        await deleteTMISLayer(layer.id);
+    }
+};
+// TMIS Processes operations
+export const addTMISProcess = async (data) => {
+    const docRef = await addDoc(collection(db, 'TMIS_Processes'), data);
+    return docRef.id;
+};
+export const updateTMISProcess = async (id, data) => {
+    await updateDoc(doc(db, 'TMIS_Processes', id), data);
+};
+export const deleteTMISProcess = async (id) => {
+    await deleteDoc(doc(db, 'TMIS_Processes', id));
+};
+export const getProcessesByHeaderId = async (headerId) => {
+    const querySnapshot = await getDocs(query(collection(db, 'TMIS_Processes'), where('headerId', '==', headerId)));
+    const processes = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    return processes.sort((a, b) => a.ProcessLetter.localeCompare(b.ProcessLetter));
+};
+export const deleteProcessesByHeaderId = async (headerId) => {
+    const processes = await getProcessesByHeaderId(headerId);
+    for (const process of processes) {
+        await deleteTMISProcess(process.id);
+    }
+};
+// TMIS Slitting operations
+export const addTMISSlitting = async (data) => {
+    const docRef = await addDoc(collection(db, 'TMIS_Slitting'), data);
+    return docRef.id;
+};
+export const updateTMISSlitting = async (id, data) => {
+    await updateDoc(doc(db, 'TMIS_Slitting', id), data);
+};
+export const deleteTMISSlitting = async (id) => {
+    await deleteDoc(doc(db, 'TMIS_Slitting', id));
+};
+export const getSlittingsByHeaderId = async (headerId) => {
+    const querySnapshot = await getDocs(query(collection(db, 'TMIS_Slitting'), where('headerId', '==', headerId)));
+    const slittings = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    return slittings.sort((a, b) => a.RowNo - b.RowNo);
+};
+export const deleteSlittingsByHeaderId = async (headerId) => {
+    const slittings = await getSlittingsByHeaderId(headerId);
+    for (const slitting of slittings) {
+        await deleteTMISSlitting(slitting.id);
+    }
+};
