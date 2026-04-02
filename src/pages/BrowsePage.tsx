@@ -3,13 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../utils/AuthContext';
 import { getAllTMISHeaders, searchTMISByTapeCode, filterTMISByStatus } from '../utils/firebaseUtils';
 import { TMISHeader } from '../types';
-import { BackupModal } from '../components/BackupModal';
 
 export const BrowsePage: React.FC = () => {
   const [headers, setHeaders] = useState<TMISHeader[]>([]);
   const [filteredHeaders, setFilteredHeaders] = useState<TMISHeader[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showBackupModal, setShowBackupModal] = useState(false);
   const [searchTape, setSearchTape] = useState('');
   const [statusFilter, setStatusFilter] = useState<'All' | 'Active' | 'Obsolete'>('All');
   const navigate = useNavigate();
@@ -95,13 +93,6 @@ export const BrowsePage: React.FC = () => {
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900">TMIS Records</h2>
           <div className="flex gap-3">
-            <button
-              onClick={() => setShowBackupModal(true)}
-              className="px-6 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition"
-              title="Backup and recover your data"
-            >
-              💾 Backup
-            </button>
             <button
               onClick={() => navigate('/ftr')}
               className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
@@ -262,9 +253,6 @@ export const BrowsePage: React.FC = () => {
           </div>
         )}
       </div>
-
-      {/* Backup Modal */}
-      <BackupModal isOpen={showBackupModal} onClose={() => setShowBackupModal(false)} />
     </div>
   );
 };
