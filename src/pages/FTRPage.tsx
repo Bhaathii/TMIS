@@ -317,22 +317,14 @@ export const FTRPage: React.FC = () => {
               >
                 {/* PDF Content */}
                 <div className="space-y-4">
-                  {/* Header with Logo */}
-                  <div className="flex justify-between items-start border-b pb-4">
-                    <div>
-                      <img
-                        src="/ardmel-logo.svg"
-                        alt="ARDMEL Logo"
-                        className="h-16 w-auto"
-                      />
-                    </div>
-                    <div className="text-right">
-                      <h1 className="text-2xl font-bold text-gray-900">FIELD TEST REPORT</h1>
-                      <p className="text-sm text-gray-600 mt-1">FTR #{formData.ftrNumber}</p>
-                      <p className="text-sm text-gray-600">
-                        {new Date().toLocaleDateString()}
-                      </p>
-                    </div>
+                  {/* Header */}
+                  <div className="border-b pb-4">
+                    <h1 className="text-3xl font-bold text-gray-900">ARDMEL</h1>
+                    <p className="text-sm text-gray-600 mt-1">Field Test Report</p>
+                    <p className="text-sm text-gray-600">FTR #{formData.ftrNumber}</p>
+                    <p className="text-sm text-gray-600">
+                      {new Date().toLocaleDateString()}
+                    </p>
                   </div>
 
                   {/* Customer Information */}
