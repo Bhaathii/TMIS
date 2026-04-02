@@ -5,6 +5,7 @@ import { LoginPage } from './pages/LoginPage';
 import { BrowsePage } from './pages/BrowsePage';
 import { CreateEditPage } from './pages/CreateEditPage';
 import { ViewDetailPage } from './pages/ViewDetailPage';
+import { FTRPage } from './pages/FTRPage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { currentUser, loading } = useAuth();
@@ -43,6 +44,7 @@ const AppRoutes: React.FC = () => {
           <Route path="/create" element={<CreateEditPage />} />
           <Route path="/edit/:id" element={<CreateEditPage />} />
           <Route path="/view/:id" element={<ViewDetailPage />} />
+          <Route path="/ftr" element={<FTRPage />} />
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/login" element={<Navigate to="/dashboard" replace />} />
         </>

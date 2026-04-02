@@ -55,3 +55,25 @@ export interface TMISSlitting {
   ProcessingTime?: string | number;
   Cleaning?: string;
 }
+
+export type FTRType = 'Tape' | 'Seam Sealer' | 'Laser' | 'Strip Cutter' | 'Other';
+
+export interface FTRData {
+  id: string;
+  ftrNumber: number;
+  customerAccount: string;
+  customerName: string;
+  returnAddress: string;
+  contactName: string;
+  contactEmail: string;
+  contactTel: string;
+  ftrType: FTRType;
+  fabricInfo: string;
+  customerRequirements: string;
+  results: {
+    [key: string]: string;
+  };
+  createdAt: Date;
+  updatedAt: Date;
+  createdBy: string;
+}

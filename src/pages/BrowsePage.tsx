@@ -92,14 +92,22 @@ export const BrowsePage: React.FC = () => {
         {/* Title and Action Button */}
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900">TMIS Records</h2>
-          {(currentUser?.role?.trim() === 'admin' || currentUser?.role?.trim() === 'editor') && (
+          <div className="flex gap-3">
             <button
-              onClick={() => navigate('/create')}
-              className="px-6 py-2 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition"
+              onClick={() => navigate('/ftr')}
+              className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
             >
-              + New Record
+              📋 FTR
             </button>
-          )}
+            {(currentUser?.role?.trim() === 'admin' || currentUser?.role?.trim() === 'editor') && (
+              <button
+                onClick={() => navigate('/create')}
+                className="px-6 py-2 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition"
+              >
+                + New Record
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Search and Filter Section */}

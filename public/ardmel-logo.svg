@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 545 133" width="545" height="133">
+  <!-- Background -->
+  <rect width="545" height="133" fill="white"/>
+  
+  <!-- Main Text "ARDMEL" -->
+  <text x="85" y="65" font-family="Arial, sans-serif" font-size="56" font-weight="bold" fill="#001b42" letter-spacing="2">ARDMEL</text>
+  
+  <!-- Tagline "A world of performance" -->
+  <text x="310" y="85" font-family="Arial, sans-serif" font-size="14" fill="#666" letter-spacing="0.5">A world of</text>
+  <text x="310" y="105" font-family="Arial, sans-serif" font-size="14" fill="#666" letter-spacing="0.5">performance</text>
+  
+  <!-- Blue swoosh/arrow line -->
+  <path d="M 30 75 Q 150 55, 280 65 L 300 55 L 275 80 Q 155 70, 35 85 Z" fill="#0066cc" opacity="0.9"/>
+  <path d="M 280 65 L 320 45 L 300 70 Z" fill="#0066cc"/>
+  
+  <!-- Gray accent line -->
+  <path d="M 280 65 L 420 75" stroke="#cccccc" stroke-width="8" fill="none"/>
+  <path d="M 420 75 L 450 70" stroke="#999999" stroke-width="6" fill="none"/>
+</svg>
