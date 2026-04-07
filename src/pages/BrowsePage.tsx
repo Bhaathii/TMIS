@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../utils/AuthContext';
-import { getAllTMISHeaders, searchTMISByTapeCode, filterTMISByStatus } from '../utils/firebaseUtils';
+import { getAllTMISHeaders, searchTMISByTapeCode, filterTMISByStatus, deleteTMISHeader, logActivity } from '../utils/firebaseUtils';
 import { TMISHeader } from '../types';
+import { LoginHistoryModal } from '../components/LoginHistoryModal';
 
 export const BrowsePage: React.FC = () => {
   const [headers, setHeaders] = useState<TMISHeader[]>([]);
@@ -10,6 +11,7 @@ export const BrowsePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchTape, setSearchTape] = useState('');
   const [statusFilter, setStatusFilter] = useState<'All' | 'Active' | 'Obsolete'>('All');
+  const [loginHistoryOpen, setLoginHistoryOpen] = useState(false);
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
 
@@ -63,6 +65,32 @@ export const BrowsePage: React.FC = () => {
     }
   };
 
+  const handleDelete = async (header: TMISHeader) => {
+    if (!confirm(`Are you sure you want to delete record "${header.TapeCode}"?`)) {
+      return;
+    }
+
+    try {
+      await deleteTMISHeader(header.id);
+      
+      // Log activity (non-blocking - don't throw errors)
+      logActivity(
+        currentUser?.uid || '',
+        currentUser?.email || '',
+        'delete',
+        'TMIS_Header',
+        `Deleted record: ${header.TapeCode}`,
+        header.id
+      ).catch(err => console.error('Failed to log activity:', err));
+      
+      // Reload headers
+      loadHeaders();
+    } catch (error) {
+      console.error('Error deleting record:', error);
+      alert('Failed to delete record');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header Navigation */}
@@ -77,6 +105,13 @@ export const BrowsePage: React.FC = () => {
               <p className="text-sm font-medium text-gray-900">{currentUser?.email}</p>
               <p className="text-xs text-gray-500 capitalize">{currentUser?.role}</p>
             </div>
+            <button
+              onClick={() => setLoginHistoryOpen(true)}
+              className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+              title="View login history"
+            >
+              📖 Login History
+            </button>
             <button
               onClick={handleLogout}
               className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
@@ -233,11 +268,7 @@ export const BrowsePage: React.FC = () => {
                           )}
                           {canUserDelete && (
                             <button
-                              onClick={() => {
-                                if (confirm('Are you sure you want to delete this record?')) {
-                                  // Handle delete
-                                }
-                              }}
+                              onClick={() => handleDelete(header)}
                               className="px-3 py-1 text-sm text-red-600 hover:text-red-700 font-medium"
                             >
                               Delete
@@ -253,6 +284,9 @@ export const BrowsePage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Login History Modal */}
+      <LoginHistoryModal isOpen={loginHistoryOpen} onClose={() => setLoginHistoryOpen(false)} />
     </div>
   );
 };

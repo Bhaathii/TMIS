@@ -56,6 +56,28 @@ export interface TMISSlitting {
   Cleaning?: string;
 }
 
+export interface LoginHistory {
+  id: string;
+  uid: string;
+  email: string;
+  loginTime: Date;
+  ipAddress?: string;
+  userAgent?: string;
+}
+
+export type ActivityType = 'login' | 'create' | 'edit' | 'delete' | 'view';
+
+export interface ActivityLog {
+  id: string;
+  uid: string;
+  email: string;
+  action: ActivityType;
+  resourceType: string; // 'TMIS_Header', 'TMIS_Layer', etc.
+  resourceId?: string;
+  description: string;
+  timestamp: Date;
+}
+
 export type FTRType = 'Tape' | 'Seam Sealer' | 'Laser' | 'Strip Cutter' | 'Other';
 
 export interface FTRData {

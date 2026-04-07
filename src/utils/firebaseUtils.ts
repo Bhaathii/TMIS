@@ -12,7 +12,7 @@ import {
   Timestamp,
 } from 'firebase/firestore';
 import { db } from '../firebase/config';
-import { TMISHeader, TMISLayer, TMISProcess, TMISSlitting } from '../types';
+import { TMISHeader, TMISLayer, TMISProcess, TMISSlitting, LoginHistory, ActivityLog, ActivityType } from '../types';
 
 // Helper function to convert Firestore Timestamps to JavaScript Dates
 const convertTimestamps = (data: any): any => {
@@ -43,6 +43,24 @@ const convertTimestamps = (data: any): any => {
       converted.updatedAt = converted.updatedAt.toDate();
     } else if (typeof converted.updatedAt === 'string') {
       converted.updatedAt = new Date(converted.updatedAt);
+    }
+  }
+  
+  // Convert loginTime
+  if (converted.loginTime) {
+    if (converted.loginTime instanceof Timestamp) {
+      converted.loginTime = converted.loginTime.toDate();
+    } else if (typeof converted.loginTime === 'string') {
+      converted.loginTime = new Date(converted.loginTime);
+    }
+  }
+  
+  // Convert timestamp (for activity logs)
+  if (converted.timestamp) {
+    if (converted.timestamp instanceof Timestamp) {
+      converted.timestamp = converted.timestamp.toDate();
+    } else if (typeof converted.timestamp === 'string') {
+      converted.timestamp = new Date(converted.timestamp);
     }
   }
   
@@ -194,5 +212,109 @@ export const deleteSlittingsByHeaderId = async (headerId: string) => {
   const slittings = await getSlittingsByHeaderId(headerId);
   for (const slitting of slittings) {
     await deleteTMISSlitting(slitting.id);
+  }
+};
+
+// Login History operations
+export const recordLogin = async (uid: string, email: string) => {
+  try {
+    await addDoc(collection(db, 'loginHistory'), {
+      uid,
+      email,
+      loginTime: Timestamp.now(),
+      userAgent: navigator.userAgent,
+    });
+  } catch (error) {
+    console.error('Error recording login:', error);
+    // Don't throw error - this shouldn't block login
+  }
+};
+
+export const getLoginHistoryForUser = async (uid: string): Promise<LoginHistory[]> => {
+  try {
+    const querySnapshot = await getDocs(
+      query(
+        collection(db, 'loginHistory'),
+        where('uid', '==', uid),
+        orderBy('loginTime', 'desc')
+      )
+    );
+    return querySnapshot.docs.map(
+      (doc) => convertTimestamps({ id: doc.id, ...doc.data() }) as LoginHistory
+    );
+  } catch (error) {
+    console.error('Error fetching login history:', error);
+    return [];
+  }
+};
+
+export const getAllLoginHistory = async (): Promise<LoginHistory[]> => {
+  try {
+    const querySnapshot = await getDocs(
+      query(collection(db, 'loginHistory'), orderBy('loginTime', 'desc'))
+    );
+    return querySnapshot.docs.map(
+      (doc) => convertTimestamps({ id: doc.id, ...doc.data() }) as LoginHistory
+    );
+  } catch (error) {
+    console.error('Error fetching all login history:', error);
+    return [];
+  }
+};
+
+// Activity Log operations
+export const logActivity = async (
+  uid: string,
+  email: string,
+  action: ActivityType,
+  resourceType: string,
+  description: string,
+  resourceId?: string
+) => {
+  try {
+    await addDoc(collection(db, 'activityLog'), {
+      uid,
+      email,
+      action,
+      resourceType,
+      resourceId,
+      description,
+      timestamp: Timestamp.now(),
+    });
+  } catch (error) {
+    console.error('Error logging activity:', error);
+    // Don't throw error - this shouldn't block operations
+  }
+};
+
+export const getActivityLogForUser = async (uid: string): Promise<ActivityLog[]> => {
+  try {
+    const querySnapshot = await getDocs(
+      query(
+        collection(db, 'activityLog'),
+        where('uid', '==', uid),
+        orderBy('timestamp', 'desc')
+      )
+    );
+    return querySnapshot.docs.map(
+      (doc) => convertTimestamps({ id: doc.id, ...doc.data() }) as ActivityLog
+    );
+  } catch (error) {
+    console.error('Error fetching activity log:', error);
+    return [];
+  }
+};
+
+export const getAllActivityLog = async (): Promise<ActivityLog[]> => {
+  try {
+    const querySnapshot = await getDocs(
+      query(collection(db, 'activityLog'), orderBy('timestamp', 'desc'))
+    );
+    return querySnapshot.docs.map(
+      (doc) => convertTimestamps({ id: doc.id, ...doc.data() }) as ActivityLog
+    );
+  } catch (error) {
+    console.error('Error fetching all activity log:', error);
+    return [];
   }
 };

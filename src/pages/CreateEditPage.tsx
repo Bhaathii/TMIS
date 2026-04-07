@@ -5,6 +5,7 @@ import {
   getTMISHeader,
   updateTMISHeader,
   addTMISHeader,
+  logActivity,
   getLayersByHeaderId,
   getProcessesByHeaderId,
   getSlittingsByHeaderId,
@@ -151,6 +152,16 @@ export const CreateEditPage: React.FC = () => {
       if (isEditMode && headerId) {
         // Update existing header
         await updateTMISHeader(headerId, header as TMISHeader);
+        
+        // Log activity (non-blocking - don't throw errors)
+        logActivity(
+          currentUser?.uid || '',
+          currentUser?.email || '',
+          'edit',
+          'TMIS_Header',
+          `Edited record: ${header.TapeCode}`,
+          headerId
+        ).catch(err => console.error('Failed to log activity:', err));
 
         // Handle layers
         for (const layer of layers) {
@@ -196,6 +207,16 @@ export const CreateEditPage: React.FC = () => {
           ...(header as TMISHeader),
           createdBy: currentUser?.uid || '',
         });
+        
+        // Log activity (non-blocking - don't throw errors)
+        logActivity(
+          currentUser?.uid || '',
+          currentUser?.email || '',
+          'create',
+          'TMIS_Header',
+          `Created new record: ${header.TapeCode}`,
+          headerId
+        ).catch(err => console.error('Failed to log activity:', err));
 
         // Add child records
         for (const layer of layers) {

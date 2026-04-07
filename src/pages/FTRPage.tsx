@@ -11,26 +11,39 @@ export const FTRPage: React.FC = () => {
 
   const [formData, setFormData] = useState({
     ftrNumber: 1001,
-    customerAccount: '',
-    customerName: '',
-    returnAddress: '',
-    contactName: '',
-    contactEmail: '',
-    contactTel: '',
-    ftrType: 'Tape' as FTRType,
+    dateRaised: new Date().toISOString().split('T')[0],
+    customer: '',
+    ftrCategory: '',
+    description: '',
+    raisedBy: '',
+    status: 'Open',
+    priority: 'Medium',
+    responsiblePerson: '',
+    targetDate: '',
+    remarks: '',
+    supportInk: '',
     fabricInfo: '',
-    customerRequirements: '',
-    results: {} as { [key: string]: string },
+    customerRequirement: '',
+    ftrType: 'Tape' as FTRType,
+    technicalParams: {
+      machineType: '',
+      fabric: '',
+      tapeCode: '',
+      tapeWidth: '',
+      temperature: '',
+      airFlow: '',
+      speed: '',
+      quillPressure: '',
+      nozzlePosition: '',
+      rollerTemperature: '',
+      differential: '',
+      depthStop: '',
+      hydroTest: '',
+      gaugeSetting: '',
+    },
+    attachments: '',
   });
 
-  // Define fields required for each FTR type
-  const resultFields: { [key in FTRType]: string[] } = {
-    'Tape': ['Peel Strength', 'Shear Strength', 'Temperature Resistance', 'Adhesion'],
-    'Seam Sealer': ['Waterproof Rating', 'Flexibility', 'Durability', 'Appearance'],
-    'Laser': ['Cut Quality', 'Power Setting', 'Speed', 'Accuracy'],
-    'Strip Cutter': ['Strip Width', 'Precision', 'Feed Speed', 'Quality'],
-    'Other': ['Test Duration', 'Test Result', 'Observations', 'Pass/Fail'],
-  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -40,21 +53,13 @@ export const FTRPage: React.FC = () => {
       ...prev,
       [name]: value,
     }));
-
-    // Reset results when changing FTR type
-    if (name === 'ftrType') {
-      setFormData((prev) => ({
-        ...prev,
-        results: {},
-      }));
-    }
   };
 
-  const handleResultChange = (field: string, value: string) => {
+  const handleTechnicalParamChange = (field: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
-      results: {
-        ...prev.results,
+      technicalParams: {
+        ...prev.technicalParams,
         [field]: value,
       },
     }));
@@ -141,113 +146,173 @@ export const FTRPage: React.FC = () => {
                 />
               </div>
 
-              {/* Customer Account */}
+              {/* Date Raised */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Customer Account
+                  Date Raised
                 </label>
                 <input
-                  type="text"
-                  name="customerAccount"
-                  value={formData.customerAccount}
+                  type="date"
+                  name="dateRaised"
+                  value={formData.dateRaised}
                   onChange={handleInputChange}
-                  placeholder="Enter customer account"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
 
-              {/* Customer Name */}
+              {/* Customer */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Customer / Company Name
+                  Customer
                 </label>
                 <input
                   type="text"
-                  name="customerName"
-                  value={formData.customerName}
+                  name="customer"
+                  value={formData.customer}
                   onChange={handleInputChange}
                   placeholder="Enter customer name"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
 
-              {/* Return Address */}
+              {/* FTR Category */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Return Address
+                  FTR Category
+                </label>
+                <input
+                  type="text"
+                  name="ftrCategory"
+                  value={formData.ftrCategory}
+                  onChange={handleInputChange}
+                  placeholder="Enter FTR category"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              {/* Description */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Description
                 </label>
                 <textarea
-                  name="returnAddress"
-                  value={formData.returnAddress}
+                  name="description"
+                  value={formData.description}
                   onChange={handleInputChange}
-                  placeholder="Enter return address"
+                  placeholder="Enter description"
                   rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
 
-              {/* Contact Name */}
+              {/* Raised By */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Contact Name
+                  Raised By
                 </label>
                 <input
                   type="text"
-                  name="contactName"
-                  value={formData.contactName}
+                  name="raisedBy"
+                  value={formData.raisedBy}
                   onChange={handleInputChange}
-                  placeholder="Enter contact name"
+                  placeholder="Enter name"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
 
-              {/* Contact Email */}
+              {/* Status */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Contact Email
-                </label>
-                <input
-                  type="email"
-                  name="contactEmail"
-                  value={formData.contactEmail}
-                  onChange={handleInputChange}
-                  placeholder="Enter contact email"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-
-              {/* Contact Tel */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Contact Tel No.
-                </label>
-                <input
-                  type="tel"
-                  name="contactTel"
-                  value={formData.contactTel}
-                  onChange={handleInputChange}
-                  placeholder="Enter contact telephone"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-
-              {/* FTR Type */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  FTR Type
+                  Status
                 </label>
                 <select
-                  name="ftrType"
-                  value={formData.ftrType}
+                  name="status"
+                  value={formData.status}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="Tape">Tape</option>
-                  <option value="Seam Sealer">Seam Sealer</option>
-                  <option value="Laser">Laser</option>
-                  <option value="Strip Cutter">Strip Cutter</option>
-                  <option value="Other">Other</option>
+                  <option value="Open">Open</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Closed">Closed</option>
+                  <option value="On Hold">On Hold</option>
                 </select>
+              </div>
+
+              {/* Priority */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Priority
+                </label>
+                <select
+                  name="priority"
+                  value={formData.priority}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                  <option value="Critical">Critical</option>
+                </select>
+              </div>
+
+              {/* Responsible Person */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Responsible Person
+                </label>
+                <input
+                  type="text"
+                  name="responsiblePerson"
+                  value={formData.responsiblePerson}
+                  onChange={handleInputChange}
+                  placeholder="Enter name"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              {/* Target Date */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Target Date
+                </label>
+                <input
+                  type="date"
+                  name="targetDate"
+                  value={formData.targetDate}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              {/* Remarks */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Remarks
+                </label>
+                <textarea
+                  name="remarks"
+                  value={formData.remarks}
+                  onChange={handleInputChange}
+                  placeholder="Enter remarks"
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              {/* Support Ink */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Support Ink
+                </label>
+                <input
+                  type="text"
+                  name="supportInk"
+                  value={formData.supportInk}
+                  onChange={handleInputChange}
+                  placeholder="Enter support ink details"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
               </div>
 
               {/* Fabric Info */}
@@ -265,17 +330,32 @@ export const FTRPage: React.FC = () => {
                 />
               </div>
 
-              {/* Customer Requirements */}
+              {/* Customer Requirement */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Customer Requirements
+                  Customer Requirement
                 </label>
                 <textarea
-                  name="customerRequirements"
-                  value={formData.customerRequirements}
+                  name="customerRequirement"
+                  value={formData.customerRequirement}
                   onChange={handleInputChange}
                   placeholder="Enter customer requirements"
                   rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              {/* Attachments */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Attachments
+                </label>
+                <input
+                  type="text"
+                  name="attachments"
+                  value={formData.attachments}
+                  onChange={handleInputChange}
+                  placeholder="Enter attachment details"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -284,23 +364,38 @@ export const FTRPage: React.FC = () => {
 
           {/* Results and PDF Preview */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Results Form */}
+            {/* Technical Parameters Form */}
             <div className="bg-white shadow rounded-lg p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Test Results - {formData.ftrType}
+                Technical Parameters / Settings
               </h2>
 
-              <div className="space-y-4">
-                {resultFields[formData.ftrType as FTRType]?.map((field) => (
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { field: 'machineType', label: '1. Machine Type' },
+                  { field: 'fabric', label: '2. Fabric' },
+                  { field: 'tapeCode', label: '3. Tape Code' },
+                  { field: 'tapeWidth', label: '4. Tape Width' },
+                  { field: 'temperature', label: '5. Temperature' },
+                  { field: 'airFlow', label: '6. Air Flow' },
+                  { field: 'speed', label: '7. Speed (m/min)' },
+                  { field: 'quillPressure', label: '8. Quill Pressure (psi)' },
+                  { field: 'nozzlePosition', label: '9. Nozzle Position' },
+                  { field: 'rollerTemperature', label: '10. Roller Temperature (°C)' },
+                  { field: 'differential', label: '11. Differential' },
+                  { field: 'depthStop', label: '12. Depth Stop' },
+                  { field: 'hydroTest', label: '13. Hydro Test (Bar)' },
+                  { field: 'gaugeSetting', label: '14. Gauge Setting' },
+                ].map(({ field, label }) => (
                   <div key={field}>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      {field}
+                      {label}
                     </label>
                     <input
                       type="text"
-                      value={formData.results[field] || ''}
-                      onChange={(e) => handleResultChange(field, e.target.value)}
-                      placeholder={`Enter ${field.toLowerCase()}`}
+                      value={formData.technicalParams[field as keyof typeof formData.technicalParams] || ''}
+                      onChange={(e) => handleTechnicalParamChange(field, e.target.value)}
+                      placeholder="Enter value"
                       className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
@@ -313,128 +408,204 @@ export const FTRPage: React.FC = () => {
               <h2 className="text-xl font-semibold text-gray-900 mb-4">PDF Preview</h2>
               <div
                 ref={pdfRef}
-                className="bg-white p-8 border border-gray-300 rounded overflow-hidden"
+                className="bg-white p-6 border border-gray-300 rounded overflow-hidden"
+                style={{ fontSize: '11px', lineHeight: '1.3' }}
               >
-                {/* PDF Content */}
-                <div className="space-y-4">
+                {/* PDF Content - Print Optimized */}
+                <div style={{ pageBreakAfter: 'always' }}>
                   {/* Header with Logo */}
-                  <div className="flex justify-between items-start border-b pb-4">
+                  <div className="flex justify-between items-start border-b border-gray-400 pb-3 mb-3">
                     <div>
                       <img
                         src="ardmel-logo.jpg"
                         alt="ARDMEL Logo"
-                        className="h-20 w-auto"
+                        className="h-16 w-auto"
                       />
                     </div>
                     <div className="text-right">
-                      <h1 className="text-2xl font-bold text-gray-900">FIELD TEST REPORT</h1>
-                      <p className="text-sm text-gray-600 mt-1">FTR #{formData.ftrNumber}</p>
-                      <p className="text-sm text-gray-600">
-                        {new Date().toLocaleDateString()}
-                      </p>
+                      <h1 className="text-xl font-bold text-gray-900">FIELD TEST REPORT</h1>
+                      <p className="text-xs text-gray-600 mt-1">FTR #{formData.ftrNumber}</p>
                     </div>
                   </div>
 
-                  {/* Customer Information */}
-                  <div className="grid grid-cols-2 gap-4">
+                  {/* Main Details - Compact Grid */}
+                  <div className="mb-3">
+                    {/* Row 1: FTR#, Date, Customer, Category */}
+                    <div className="grid grid-cols-4 gap-2 mb-2">
+                      <div>
+                        <p className="text-xs font-bold text-gray-700 uppercase">FTR #</p>
+                        <p className="text-xs text-gray-900">{formData.ftrNumber}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-gray-700 uppercase">Date Raised</p>
+                        <p className="text-xs text-gray-900">{formData.dateRaised || '-'}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-gray-700 uppercase">Customer</p>
+                        <p className="text-xs text-gray-900">{formData.customer || '-'}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-gray-700 uppercase">Category</p>
+                        <p className="text-xs text-gray-900">{formData.ftrCategory || '-'}</p>
+                      </div>
+                    </div>
+
+                    {/* Row 2: Status, Priority, Responsible, Target Date */}
+                    <div className="grid grid-cols-4 gap-2 mb-2">
+                      <div>
+                        <p className="text-xs font-bold text-gray-700 uppercase">Status</p>
+                        <p className="text-xs text-gray-900">{formData.status}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-gray-700 uppercase">Priority</p>
+                        <p className="text-xs text-gray-900">{formData.priority}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-gray-700 uppercase">Responsible</p>
+                        <p className="text-xs text-gray-900">{formData.responsiblePerson || '-'}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-gray-700 uppercase">Target Date</p>
+                        <p className="text-xs text-gray-900">{formData.targetDate || '-'}</p>
+                      </div>
+                    </div>
+
+                    {/* Row 3: Raised By, FTR Type, Support Ink */}
+                    <div className="grid grid-cols-3 gap-2 mb-2 border-b border-gray-300 pb-2">
+                      <div>
+                        <p className="text-xs font-bold text-gray-700 uppercase">Raised By</p>
+                        <p className="text-xs text-gray-900">{formData.raisedBy || '-'}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-gray-700 uppercase">FTR Type</p>
+                        <p className="text-xs text-gray-900">{formData.ftrType}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-gray-700 uppercase">Support Ink</p>
+                        <p className="text-xs text-gray-900">{formData.supportInk || '-'}</p>
+                      </div>
+                    </div>
+
+                    {/* Description */}
+                    <div className="mb-2">
+                      <p className="text-xs font-bold text-gray-700 uppercase">Description</p>
+                      <p className="text-xs text-gray-900 whitespace-pre-wrap leading-tight">{formData.description || '-'}</p>
+                    </div>
+
+                    {/* Remarks */}
+                    <div className="mb-2">
+                      <p className="text-xs font-bold text-gray-700 uppercase">Remarks</p>
+                      <p className="text-xs text-gray-900 whitespace-pre-wrap leading-tight">{formData.remarks || '-'}</p>
+                    </div>
+
+                    {/* Fabric Info & Customer Requirement */}
+                    <div className="grid grid-cols-2 gap-3 mb-2 border-b border-gray-300 pb-2">
+                      <div>
+                        <p className="text-xs font-bold text-gray-700 uppercase">Fabric Info</p>
+                        <p className="text-xs text-gray-900 whitespace-pre-wrap leading-tight">{formData.fabricInfo || '-'}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-gray-700 uppercase">Customer Requirement</p>
+                        <p className="text-xs text-gray-900 whitespace-pre-wrap leading-tight">{formData.customerRequirement || '-'}</p>
+                      </div>
+                    </div>
+
+                    {/* Attachments */}
                     <div>
-                      <p className="text-xs font-semibold text-gray-600 uppercase">
-                        Customer Account
-                      </p>
-                      <p className="text-sm text-gray-900">{formData.customerAccount || '-'}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold text-gray-600 uppercase">FTR Type</p>
-                      <p className="text-sm text-gray-900">{formData.ftrType}</p>
+                      <p className="text-xs font-bold text-gray-700 uppercase">Attachments</p>
+                      <p className="text-xs text-gray-900">{formData.attachments || '-'}</p>
                     </div>
                   </div>
 
-                  <div>
-                    <p className="text-xs font-semibold text-gray-600 uppercase">
-                      Customer / Company Name
-                    </p>
-                    <p className="text-sm text-gray-900">{formData.customerName || '-'}</p>
-                  </div>
-
-                  <div>
-                    <p className="text-xs font-semibold text-gray-600 uppercase">
-                      Return Address
-                    </p>
-                    <p className="text-sm text-gray-900 whitespace-pre-wrap">
-                      {formData.returnAddress || '-'}
-                    </p>
-                  </div>
-
-                  {/* Contact Information */}
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <p className="text-xs font-semibold text-gray-600 uppercase">Name</p>
-                      <p className="text-sm text-gray-900">{formData.contactName || '-'}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold text-gray-600 uppercase">Email</p>
-                      <p className="text-sm text-gray-900">{formData.contactEmail || '-'}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold text-gray-600 uppercase">Tel</p>
-                      <p className="text-sm text-gray-900">{formData.contactTel || '-'}</p>
-                    </div>
-                  </div>
-
-                  {/* Fabric Information */}
-                  <div>
-                    <p className="text-xs font-semibold text-gray-600 uppercase">Fabric Info</p>
-                    <p className="text-sm text-gray-900 whitespace-pre-wrap">
-                      {formData.fabricInfo || '-'}
-                    </p>
-                  </div>
-
-                  {/* Customer Requirements */}
-                  <div>
-                    <p className="text-xs font-semibold text-gray-600 uppercase">
-                      Customer Requirements
-                    </p>
-                    <p className="text-sm text-gray-900 whitespace-pre-wrap">
-                      {formData.customerRequirements || '-'}
-                    </p>
-                  </div>
-
-                  {/* Results Table */}
-                  <div>
-                    <p className="text-xs font-semibold text-gray-600 uppercase mb-2">
-                      Test Results
-                    </p>
-                    <table className="w-full border-collapse border border-gray-300">
-                      <thead>
-                        <tr className="bg-gray-100">
-                          <th className="border border-gray-300 px-3 py-2 text-left text-xs font-semibold text-gray-700">
-                            Parameter
-                          </th>
-                          <th className="border border-gray-300 px-3 py-2 text-left text-xs font-semibold text-gray-700">
-                            Value
-                          </th>
-                        </tr>
-                      </thead>
+                  {/* Technical Parameters Section - 2 Column Table */}
+                  <div className="mb-3">
+                    <p className="text-xs font-bold text-gray-700 uppercase mb-2 border-b-2 border-gray-400 pb-1">Technical Parameters / Settings</p>
+                    <table className="w-full border-collapse border border-gray-400 text-xs">
                       <tbody>
-                        {resultFields[formData.ftrType as FTRType]?.map((field) => (
-                          <tr key={field}>
-                            <td className="border border-gray-300 px-3 py-2 text-xs text-gray-700">
-                              {field}
-                            </td>
-                            <td className="border border-gray-300 px-3 py-2 text-xs text-gray-900">
-                              {formData.results[field] || '-'}
-                            </td>
-                          </tr>
+                        {[
+                          { field: 'machineType', label: '1. Machine Type' },
+                          { field: 'fabric', label: '2. Fabric' },
+                          { field: 'tapeCode', label: '3. Tape Code' },
+                          { field: 'tapeWidth', label: '4. Tape Width' },
+                          { field: 'temperature', label: '5. Temperature' },
+                          { field: 'airFlow', label: '6. Air Flow' },
+                          { field: 'speed', label: '7. Speed (m/min)' },
+                          { field: 'quillPressure', label: '8. Quill Pressure (psi)' },
+                          { field: 'nozzlePosition', label: '9. Nozzle Position' },
+                          { field: 'rollerTemperature', label: '10. Roller Temp (°C)' },
+                          { field: 'differential', label: '11. Differential' },
+                          { field: 'depthStop', label: '12. Depth Stop' },
+                          { field: 'hydroTest', label: '13. Hydro Test (Bar)' },
+                          { field: 'gaugeSetting', label: '14. Gauge Setting' },
+                        ].map((item, idx) => (
+                          idx % 2 === 0 && (
+                            <tr key={idx}>
+                              <td className="border border-gray-400 px-2 py-1 font-semibold text-gray-700 w-1/4">
+                                {item.label}
+                              </td>
+                              <td className="border border-gray-400 px-2 py-1 text-gray-900 w-1/4">
+                                {formData.technicalParams[item.field as keyof typeof formData.technicalParams] || '-'}
+                              </td>
+                              {idx + 1 < 14 && (
+                                <>
+                                  <td className="border border-gray-400 px-2 py-1 font-semibold text-gray-700 w-1/4">
+                                    {[
+                                      { field: 'machineType', label: '1. Machine Type' },
+                                      { field: 'fabric', label: '2. Fabric' },
+                                      { field: 'tapeCode', label: '3. Tape Code' },
+                                      { field: 'tapeWidth', label: '4. Tape Width' },
+                                      { field: 'temperature', label: '5. Temperature' },
+                                      { field: 'airFlow', label: '6. Air Flow' },
+                                      { field: 'speed', label: '7. Speed (m/min)' },
+                                      { field: 'quillPressure', label: '8. Quill Pressure (psi)' },
+                                      { field: 'nozzlePosition', label: '9. Nozzle Position' },
+                                      { field: 'rollerTemperature', label: '10. Roller Temp (°C)' },
+                                      { field: 'differential', label: '11. Differential' },
+                                      { field: 'depthStop', label: '12. Depth Stop' },
+                                      { field: 'hydroTest', label: '13. Hydro Test (Bar)' },
+                                      { field: 'gaugeSetting', label: '14. Gauge Setting' },
+                                    ][idx + 1]?.label}
+                                  </td>
+                                  <td className="border border-gray-400 px-2 py-1 text-gray-900 w-1/4">
+                                    {formData.technicalParams[[
+                                      { field: 'machineType', label: '1. Machine Type' },
+                                      { field: 'fabric', label: '2. Fabric' },
+                                      { field: 'tapeCode', label: '3. Tape Code' },
+                                      { field: 'tapeWidth', label: '4. Tape Width' },
+                                      { field: 'temperature', label: '5. Temperature' },
+                                      { field: 'airFlow', label: '6. Air Flow' },
+                                      { field: 'speed', label: '7. Speed (m/min)' },
+                                      { field: 'quillPressure', label: '8. Quill Pressure (psi)' },
+                                      { field: 'nozzlePosition', label: '9. Nozzle Position' },
+                                      { field: 'rollerTemperature', label: '10. Roller Temp (°C)' },
+                                      { field: 'differential', label: '11. Differential' },
+                                      { field: 'depthStop', label: '12. Depth Stop' },
+                                      { field: 'hydroTest', label: '13. Hydro Test (Bar)' },
+                                      { field: 'gaugeSetting', label: '14. Gauge Setting' },
+                                    ][idx + 1]?.field as keyof typeof formData.technicalParams] || '-'}
+                                  </td>
+                                </>
+                              )}
+                            </tr>
+                          )
                         ))}
                       </tbody>
                     </table>
                   </div>
 
+                  {/* Warning Disclaimer */}
+                  <div className="text-xs text-gray-700 border-t-2 border-gray-400 pt-2 mt-2 leading-tight">
+                    <p className="font-bold mb-1">Warning – Guidance Only:</p>
+                    <p>
+                      Samples are provided, users should make their own tests to determine the suitability of our settings and / or materials prior to production. As Ardmel Automation Ltd cannot foresee the varied conditions under which this information and our materials may be used, we shall not be held liable for incidental or consequential damages or costs in connection with the supply, performance or use of this material or this information.
+                    </p>
+                  </div>
+
                   {/* Footer */}
-                  <div className="text-center text-xs text-gray-600 border-t pt-4 mt-6">
-                    <p>This is a Field Test Report generated by ARDMEL</p>
-                    <p className="mt-1">
-                      Generated on: {new Date().toLocaleString()}
+                  <div className="text-center text-xs text-gray-600 border-t border-gray-400 pt-2 mt-2">
+                    <p>Field Test Report Generated by ARDMEL</p>
+                    <p className="text-xs">
+                      {new Date().toLocaleString()}
                     </p>
                   </div>
                 </div>

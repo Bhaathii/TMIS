@@ -11,6 +11,7 @@ import {
 import { doc, getDoc, collection, getDocs, query, where, setDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase/config';
 import { User, UserRole } from '../types';
+import { recordLogin, logActivity } from './firebaseUtils';
 
 interface AuthContextType {
   currentUser: User | null;
@@ -31,6 +32,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const prevUserRef = React.useRef<User | null>(null);
+
+  // Record login when user changes from null to non-null
+  useEffect(() => {
+    if (prevUserRef.current === null && currentUser !== null) {
+      recordLogin(currentUser.uid, currentUser.email).catch(err => 
+        console.error('Failed to record login:', err)
+      );
+      logActivity(currentUser.uid, currentUser.email, 'login', 'AUTH', `User logged in`).catch(err =>
+        console.error('Failed to log activity:', err)
+      );
+    }
+    prevUserRef.current = currentUser;
+  }, [currentUser]);
 
   useEffect(() => {
     setPersistence(auth, browserLocalPersistence).then(() => {

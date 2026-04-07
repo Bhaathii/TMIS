@@ -19,7 +19,7 @@ service cloud.firestore {
     }
 
     function isEditor(userId) {
-      return isSignedIn() && userRole(userId) == "editor";
+      return isSignedIn() && (userRole(userId) == "editor" || userRole(userId) == "admin");
     }
 
     // Users collection - everyone can read their own, admins can see all
@@ -31,30 +31,42 @@ service cloud.firestore {
     // TMIS data - anyone logged in can read
     match /TMIS_Header/{document=**} {
       allow read: if isSignedIn();
-      allow create: if isSignedIn() && (isEditor(request.auth.uid) || isAdmin(request.auth.uid));
-      allow update: if isSignedIn() && (isEditor(request.auth.uid) || isAdmin(request.auth.uid));
+      allow create: if isSignedIn();
+      allow update: if isSignedIn();
       allow delete: if isSignedIn() && isAdmin(request.auth.uid);
     }
 
     match /TMIS_Layers/{document=**} {
       allow read: if isSignedIn();
-      allow create: if isSignedIn() && (isEditor(request.auth.uid) || isAdmin(request.auth.uid));
-      allow update: if isSignedIn() && (isEditor(request.auth.uid) || isAdmin(request.auth.uid));
+      allow create: if isSignedIn();
+      allow update: if isSignedIn();
       allow delete: if isSignedIn() && (isEditor(request.auth.uid) || isAdmin(request.auth.uid));
     }
 
     match /TMIS_Processes/{document=**} {
       allow read: if isSignedIn();
-      allow create: if isSignedIn() && (isEditor(request.auth.uid) || isAdmin(request.auth.uid));
-      allow update: if isSignedIn() && (isEditor(request.auth.uid) || isAdmin(request.auth.uid));
+      allow create: if isSignedIn();
+      allow update: if isSignedIn();
       allow delete: if isSignedIn() && (isEditor(request.auth.uid) || isAdmin(request.auth.uid));
     }
 
     match /TMIS_Slitting/{document=**} {
       allow read: if isSignedIn();
-      allow create: if isSignedIn() && (isEditor(request.auth.uid) || isAdmin(request.auth.uid));
-      allow update: if isSignedIn() && (isEditor(request.auth.uid) || isAdmin(request.auth.uid));
+      allow create: if isSignedIn();
+      allow update: if isSignedIn();
       allow delete: if isSignedIn() && (isEditor(request.auth.uid) || isAdmin(request.auth.uid));
+    }
+
+    // Login History - anyone logged in can write, admins see all, users see only their own
+    match /loginHistory/{document=**} {
+      allow write: if isSignedIn();
+      allow read: if isSignedIn();
+    }
+
+    // Activity Log - anyone logged in can write, admins see all, users can read their own
+    match /activityLog/{document=**} {
+      allow write: if isSignedIn();
+      allow read: if isSignedIn();
     }
   }
 }
