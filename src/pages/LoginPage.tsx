@@ -86,22 +86,6 @@ export const LoginPage: React.FC = () => {
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
-
-          {/* Demo Credentials Info */}
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <p className="text-xs text-gray-500 text-center mb-3">Demo Credentials:</p>
-            <div className="space-y-2 text-xs bg-gray-50 p-3 rounded">
-              <p className="text-gray-600">
-                <span className="font-semibold">Admin:</span> admin@tmis.com / password123
-              </p>
-              <p className="text-gray-600">
-                <span className="font-semibold">Editor:</span> editor@tmis.com / password123
-              </p>
-              <p className="text-gray-600">
-                <span className="font-semibold">Viewer:</span> viewer@tmis.com / password123
-              </p>
-            </div>
-          </div>
         </div>
 
         {/* Footer */}
