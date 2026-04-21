@@ -90,7 +90,7 @@ export const LoginPage: React.FC = () => {
 
         {/* Footer */}
         <p className="text-center text-white text-sm mt-8">
-          © 2024 TMIS. All rights reserved.
+          © 2026 TMIS. All rights reserved.
         </p>
       </div>
     </div>
