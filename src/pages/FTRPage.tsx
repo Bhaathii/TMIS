@@ -329,16 +329,16 @@ export const FTRPage: React.FC = () => {
               <h2 className="text-xl font-semibold text-gray-900 mb-4">📋 FTR Details</h2>
 
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                {/* FTR Number - Auto */}
+                {/* FTR Number - Editable */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">FTR Number</label>
                   <input
                     type="number"
                     value={formData.ftrNumber}
-                    readOnly
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-green-100 text-gray-900 font-semibold cursor-not-allowed"
+                    onChange={(e) => setFormData(prev => ({ ...prev, ftrNumber: parseInt(e.target.value) || 0 }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-900 font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                  <p className="text-xs text-green-700 mt-1">✓ Auto</p>
+                  <p className="text-xs text-blue-700 mt-1">✎ Editable</p>
                 </div>
 
                 {/* Date Raised - Auto */}
@@ -347,10 +347,10 @@ export const FTRPage: React.FC = () => {
                   <input
                     type="date"
                     value={formData.dateRaised}
-                    readOnly
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-green-100 text-gray-900 font-semibold cursor-not-allowed"
+                    onChange={(e) => setFormData(prev => ({ ...prev, dateRaised: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-900 font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                  <p className="text-xs text-green-700 mt-1">✓ Auto</p>
+                  <p className="text-xs text-blue-700 mt-1">✎ Editable</p>
                 </div>
 
                 {/* Customer */}
