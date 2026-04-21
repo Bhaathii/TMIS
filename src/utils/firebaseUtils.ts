@@ -318,3 +318,48 @@ export const getAllActivityLog = async (): Promise<ActivityLog[]> => {
     return [];
   }
 };
+
+// FTR Report operations
+export const getLatestFTRNumber = async (): Promise<number> => {
+  try {
+    const querySnapshot = await getDocs(
+      query(collection(db, 'FTR_Reports'), orderBy('ftrNumber', 'desc'))
+    );
+    if (querySnapshot.docs.length === 0) {
+      return 1001; // Starting number
+    }
+    const latest = querySnapshot.docs[0].data();
+    return (latest.ftrNumber || 1001) + 1;
+  } catch (error) {
+    console.error('Error fetching latest FTR number:', error);
+    return 1001; // Default to starting number on error
+  }
+};
+
+export const saveFTRReport = async (ftrData: any) => {
+  try {
+    const docRef = await addDoc(collection(db, 'FTR_Reports'), {
+      ...ftrData,
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error('Error saving FTR report:', error);
+    throw error;
+  }
+};
+
+export const getAllFTRReports = async () => {
+  try {
+    const querySnapshot = await getDocs(
+      query(collection(db, 'FTR_Reports'), orderBy('createdAt', 'desc'))
+    );
+    return querySnapshot.docs.map(
+      (doc) => convertTimestamps({ id: doc.id, ...doc.data() })
+    );
+  } catch (error) {
+    console.error('Error fetching FTR reports:', error);
+    return [];
+  }
+};

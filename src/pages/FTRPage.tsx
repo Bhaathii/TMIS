@@ -8,6 +8,8 @@ import {
   getAllTMISHeaders,
   getProcessesByHeaderId,
   getLayersByHeaderId,
+  getLatestFTRNumber,
+  saveFTRReport,
 } from '../utils/firebaseUtils';
 
 export const FTRPage: React.FC = () => {
@@ -54,20 +56,28 @@ export const FTRPage: React.FC = () => {
     attachments: '',
   });
 
-  // Load TMIS records
+  // Load FTR number and TMIS records
   useEffect(() => {
-    const loadRecords = async () => {
+    const initializeData = async () => {
       try {
         setLoading(true);
+        // Load next FTR number
+        const nextFTRNumber = await getLatestFTRNumber();
+        setFormData(prev => ({
+          ...prev,
+          ftrNumber: nextFTRNumber,
+        }));
+        
+        // Load TMIS records
         const records = await getAllTMISHeaders();
         setTmisRecords(records);
       } catch (error) {
-        console.error('Error loading TMIS records:', error);
+        console.error('Error initializing FTR page:', error);
       } finally {
         setLoading(false);
       }
     };
-    loadRecords();
+    initializeData();
   }, []);
 
   // Handle tape code entry - search TMIS and auto-fill ALL technical parameters
@@ -230,6 +240,26 @@ export const FTRPage: React.FC = () => {
     if (doc) {
       doc.save(`FTR-${formData.ftrNumber}-${formData.dateRaised}.pdf`);
       setShowPreview(false);
+    }
+  };
+
+  const handleSaveFTR = async () => {
+    try {
+      setLoading(true);
+      const ftrId = await saveFTRReport(formData);
+      alert(`FTR #${formData.ftrNumber} saved successfully (ID: ${ftrId})`);
+      
+      // Load next FTR number for next form
+      const nextFTRNumber = await getLatestFTRNumber();
+      setFormData(prev => ({
+        ...prev,
+        ftrNumber: nextFTRNumber,
+        dateRaised: new Date().toISOString().split('T')[0],
+      }));
+    } catch (error) {
+      alert(`Error saving FTR: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -561,14 +591,17 @@ export const FTRPage: React.FC = () => {
               <div className="mt-6 flex gap-3">
                 <button
                   onClick={handlePreview}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 transition"
+                  className="px-6 py-2 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 transition disabled:opacity-50"
+                  disabled={loading}
                 >
                   👁️ Preview PDF
                 </button>
                 <button
-                  className="px-6 py-2 bg-green-600 text-white rounded-md font-semibold hover:bg-green-700 transition"
+                  onClick={handleSaveFTR}
+                  className="px-6 py-2 bg-green-600 text-white rounded-md font-semibold hover:bg-green-700 transition disabled:opacity-50"
+                  disabled={loading}
                 >
-                  💾 Save FTR
+                  {loading ? '⏳ Saving...' : '💾 Save FTR'}
                 </button>
               </div>
             </div>
